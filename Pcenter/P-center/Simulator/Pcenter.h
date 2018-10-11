@@ -13,6 +13,9 @@
 #define K 5
 #define MAX_ITERATIONS 10000
 #define MAX_NO_IMPROVE_ITERATIONS 3000
+#define LOG_ON 1
+#define LOG_MOVE 1
+#define SEPARATOR "================"
 typedef struct Coord{
 	float x, y;
 }Coord;
@@ -51,13 +54,16 @@ typedef struct Solution {
 			best_centerNodes[i] = centerNodes[i];
 		}
 	}
-	void print_solution() {
+	void print_solution(int print_center) {
 		std::cout << "The length of longest service edge is " << best_f << std::endl;
-		for (int i = 0; i < centerNum; i++) {
-			std::cout << best_centerNodes[i] << " ";
-			if (i % 10 == 0)
-				std::cout << std::endl;
+		if (print_center) {
+			for (int i = 0; i < centerNum; i++) {
+				std::cout << best_centerNodes[i] << " ";
+				if (i != 0 && i % 10 == 0)
+					std::cout << std::endl;
+			}
 		}
+		
 	}
 }Solution;
 typedef struct NodesOfCN {
@@ -132,3 +138,4 @@ void init_solution(PcenterSolver *solver);
 Move *find_move(PcenterSolver *solver, int iter);
 void make_move(Move *move, PcenterSolver *solver, int iter);
 void check_solution(PcenterSolver *solver);
+void check_D(PcenterSolver *solver);
