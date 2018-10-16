@@ -9,12 +9,13 @@
 #include<fstream>
 #define INSTANCE_DIR  "Instance\\"
 #define MAX_PATH_LEN 256
-#define P_NUM 50
+#define P_NUM 40
 #define K 5
 #define MAX_ITERATIONS 10000
-#define MAX_NO_IMPROVE_ITERATIONS 3000
+#define MAX_NO_IMPROVE_ITERATIONS 30000
 #define LOG_ON 1
 #define LOG_MOVE 1
+//#define TABU_TEST
 #define SEPARATOR "================"
 typedef struct Coord{
 	float x, y;
@@ -30,7 +31,7 @@ typedef struct Solution {
 	int *best_centerNodes; //最好的解对应的centerNodes的分布
 	int *indexInCenterNodeArray;
 	int centerNum;
-	float f,recovery_f,best_f;
+	float f,new_f,best_f;
 	int longest_edge_node;
 	Solution(int node_num) {
 		this->centerNodes = (int *)malloc(sizeof(int)*node_num);
@@ -137,5 +138,6 @@ int PcenterSolver_solve(PcenterSolver *solver);
 void init_solution(PcenterSolver *solver);
 Move *find_move(PcenterSolver *solver, int iter);
 void make_move(Move *move, PcenterSolver *solver, int iter);
-void check_solution(PcenterSolver *solver);
+void check_current_solution(PcenterSolver *solver);
+void check_end_solution(PcenterSolver * solver);
 void check_D(PcenterSolver *solver);
