@@ -8,13 +8,13 @@
 #include<time.h>
 #include<fstream>
 #define INSTANCE_DIR  "Instance\\"
+#define INSTANCE_LIST "instance.txt"
 #define MAX_PATH_LEN 256
-#define P_NUM 40
 #define K 5
-#define MAX_ITERATIONS 10000
+#define MAX_ITERATIONS 100000
 #define MAX_NO_IMPROVE_ITERATIONS 30000
 #define LOG_ON 1
-#define LOG_MOVE 1
+//#define LOG_MOVE 1
 //#define TABU_TEST
 #define SEPARATOR "================"
 typedef struct Coord{
@@ -68,11 +68,14 @@ typedef struct Solution {
 	}
 }Solution;
 typedef struct NodesOfCN {
-	int *nodesOfCentroid[P_NUM];
-	int *index[P_NUM];
-	int num[P_NUM];
-	NodesOfCN(int node_num) {
-		for (int i = 0; i < P_NUM; i++) {
+	int **nodesOfCentroid;
+	int **index;
+	int *num;
+	NodesOfCN(int node_num,int p_num) {
+		nodesOfCentroid = new int *[p_num];
+		index = new int*[p_num];
+		num = new int[p_num];
+		for (int i = 0; i < p_num; i++) {
 			nodesOfCentroid[i] = new int[node_num];
 			index[i] = new int[node_num];
 			memset(index[i], -1, sizeof(int)*node_num);
@@ -96,6 +99,8 @@ typedef struct NodesOfCN {
 class PcenterSolver {
 public:
 	int node_num;
+	int p_num;
+	float true_best_f;
 	std::vector<Coord> coord;
 	float **distance;
 	Solution *solution;
@@ -105,9 +110,16 @@ public:
 	int **tabu_list;
 	int (*F)[2];
 	float (*D)[2];
+	void readTxtFile(std::string filename);
 	void readTspFile(std::string filename);
-	PcenterSolver(std::string filename) {
-		readTspFile(filename);//读取坐标信息
+	PcenterSolver(std::string filename, int p_num, int true_best_f) {
+		if (filename.find(".txt") == std::string::npos) {
+			readTxtFile(filename);
+		}
+		else {
+			readTspFile(filename);//读取坐标信息
+
+		}
 		this->node_num = this->coord.size();
 		int len = this->node_num;
 		for (int i = 0; i < len; i++) {
@@ -123,8 +135,10 @@ public:
 				this->distance[i][j] = calculateDistance(this->coord[i], this->coord[j]);
 			}
 		}
+		this->p_num = p_num;
+		this->true_best_f = true_best_f;
 		this->solution = new Solution(this->node_num);
-		this->nodesOfCenter = new NodesOfCN(this->node_num);
+		this->nodesOfCenter = new NodesOfCN(this->node_num,this->p_num);
 		this->F = new int[this->node_num][2];
 		this->D = new float[this->node_num][2];
 	}
@@ -133,7 +147,7 @@ typedef struct DisNode {
 	float distance;
 	int node;
 }DisNode;
-void testInstance(std::string name);
+void testInstance(std::string name, int p_num, int true_best_f);
 int PcenterSolver_solve(PcenterSolver *solver);
 void init_solution(PcenterSolver *solver);
 Move *find_move(PcenterSolver *solver, int iter);

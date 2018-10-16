@@ -18,3 +18,14 @@ void PcenterSolver::readTspFile(std::string filename) {
 	}
 	
 }
+void readTxtFile(std::string filename) {
+	std::ifstream readFile(filename);
+	std::string str;
+	int cnt = 0;
+	while (std::getline(readFile, str)) {
+		if (cnt && str != "EOF") {
+			std::stringstream ss(str);
+			
+		}
+	}
+}
