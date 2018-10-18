@@ -112,31 +112,24 @@ public:
 	float (*D)[2];
 	void readTxtFile(std::string filename);
 	void readTspFile(std::string filename);
-	PcenterSolver(std::string filename, int p_num, int true_best_f) {
-		if (filename.find(".txt") == std::string::npos) {
+	PcenterSolver(std::string filename, int node_num,int p_num, int true_best_f) {
+		this->node_num = node_num;
+		this->p_num = p_num;
+		this->true_best_f = true_best_f;
+		
+		this->tabu_list = (int **)malloc(sizeof(int *)*node_num);
+		this->distance = (float **)malloc(sizeof(float*)*node_num);
+		for (int i = 0; i < node_num; i++) {
+			this->tabu_list[i] = (int *)calloc(node_num, sizeof(int));
+			this->distance[i] = (float *)malloc(sizeof(float)*node_num);
+		}
+		if (filename.find(".txt") != std::string::npos) {
 			readTxtFile(filename);
 		}
 		else {
 			readTspFile(filename);//读取坐标信息
 
 		}
-		this->node_num = this->coord.size();
-		int len = this->node_num;
-		for (int i = 0; i < len; i++) {
-			this->distance = (float **)malloc(sizeof(float*)*len);
-			this->tabu_list = (int **)malloc(sizeof(int *)*len);
-		}
-		for (int i = 0; i < len; i++) {
-			this->distance[i] = (float *)malloc(sizeof(float)*len);
-			this->tabu_list[i] = (int *)calloc(len, sizeof(int));
-		}
-		for (int i = 0; i < len; i++) {//计算距离
-			for (int j = 0; j < len; j++) {
-				this->distance[i][j] = calculateDistance(this->coord[i], this->coord[j]);
-			}
-		}
-		this->p_num = p_num;
-		this->true_best_f = true_best_f;
 		this->solution = new Solution(this->node_num);
 		this->nodesOfCenter = new NodesOfCN(this->node_num,this->p_num);
 		this->F = new int[this->node_num][2];
@@ -147,7 +140,7 @@ typedef struct DisNode {
 	float distance;
 	int node;
 }DisNode;
-void testInstance(std::string name, int p_num, int true_best_f);
+void testInstance(std::string name, int node_num, int p_num, int true_best_f);
 int PcenterSolver_solve(PcenterSolver *solver);
 void init_solution(PcenterSolver *solver);
 Move *find_move(PcenterSolver *solver, int iter);
