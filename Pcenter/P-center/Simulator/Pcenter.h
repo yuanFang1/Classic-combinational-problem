@@ -10,9 +10,10 @@
 #define INSTANCE_DIR  "Instance\\"
 #define INSTANCE_LIST "instance.txt"
 #define MAX_PATH_LEN 256
-#define K 5
-#define MAX_ITERATIONS 100000
-#define MAX_NO_IMPROVE_ITERATIONS 30000
+#define K 10
+#define FLOAT_MAX std::numeric_limits<float>::max()
+#define MAX_ITERATIONS 10000000
+#define MAX_NO_IMPROVE_ITERATIONS 500000
 #define LOG_ON 1
 //#define LOG_MOVE 1
 //#define TABU_TEST
@@ -107,7 +108,7 @@ public:
 	NodesOfCN *nodesOfCenter;
 	int iter;
 	int randseed;
-	int **tabu_list;
+	int *tabu_c2o,*tabu_o2c;
 	int (*F)[2];
 	float (*D)[2];
 	void readTxtFile(std::string filename);
@@ -117,10 +118,10 @@ public:
 		this->p_num = p_num;
 		this->true_best_f = true_best_f;
 		
-		this->tabu_list = (int **)malloc(sizeof(int *)*node_num);
+		this->tabu_c2o = (int *)calloc(node_num, sizeof(int));
+		this->tabu_o2c = (int *)calloc(node_num, sizeof(int));
 		this->distance = (float **)malloc(sizeof(float*)*node_num);
 		for (int i = 0; i < node_num; i++) {
-			this->tabu_list[i] = (int *)calloc(node_num, sizeof(int));
 			this->distance[i] = (float *)malloc(sizeof(float)*node_num);
 		}
 		if (filename.find(".txt") != std::string::npos) {

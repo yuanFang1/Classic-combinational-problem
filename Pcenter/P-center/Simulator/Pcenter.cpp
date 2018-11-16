@@ -26,11 +26,13 @@ void PcenterSolver::readTspFile(std::string filename) {
 void PcenterSolver::readTxtFile(std::string filename) {
 	std::ifstream readFile(filename);
 	std::string str;
-	float MAX = std::numeric_limits<float>::max();
 	int cnt = 0, u, v, dis, len = this->node_num;
 	for (int i = 0; i < len; i++) {//¼ÆËã¾àÀë
 		for (int j = 0; j < len; j++) {
-			distance[i][j] = MAX;
+			if (i == j)
+				distance[i][j] = 0;
+			else
+				distance[i][j] = FLOAT_MAX;
 		}
 	}
 	while (std::getline(readFile, str)) {
